@@ -17,11 +17,19 @@ async def start_command(message: types.Message): #parse_mode allow to add html t
 
 
 @dp.message()
-async def change_sticker(message: types.Message):
-    if message.text == "❤️":
-        await message.answer("🪇")
+async def check_for_heart(message: types.Message):
+    global count
+    text = message.text  # the text of the message
+    heart_count = text.count("<")
+
+    if heart_count > 0:
+        count += heart_count  # update the global count
+        await message.answer(f"Count of '<': {heart_count}")
     else:
-        await message.answer("This command only handle red heart")
+        await message.answer("No <")
+
+
+
 async def main():
     await dp.start_polling(bot)
 
