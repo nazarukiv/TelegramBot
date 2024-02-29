@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Bot, Dispatcher, types
 import string
 import random
@@ -93,6 +95,6 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    import asyncio
+    import asynhron
     asyncio.run(main())
 
