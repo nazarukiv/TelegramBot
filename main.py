@@ -18,40 +18,38 @@ keyboard_inline = InlineKeyboardMarkup(inline_keyboard=[
    [InlineKeyboardButton(text='Button 2', callback_data="btn_2")],
 ])
 
+
+user_data = ''
+
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message) -> None:
-    await message.answer(text=f"Hello {message.from_user.id}",
-                         reply_markup=keyboard_inline)
-
-@dp.callback_query()
-async def cmd_callback(callback: types.CallbackQuery):
-    if callback.data == "btn_1":
-        await callback.answer(text="Hello")
-    elif callback.data == "btn_2":
-        await callback.answer(text="World")
+    await message.answer('Write down number!')
 
 
-#InlineQuery
+@dp.message()
+async def text_handler(message: types.Message) -> None:
+    global user_data
+    user_data = message.text
+    await message.reply("Your data was saved!")
+
+
 @dp.inline_query()
-async def inline_echo(inline_query: types.InlineQuery):
-    text = inline_query.query or 'Echo' # Text received from the user's inline query input
-    if not text:
-        return  # If the query is empty, don't respond
-
-    input_content = InputTextMessageContent(message_text=text)  # Correct content creation
-    result_id = hashlib.md5(text.encode()).hexdigest()  # Generate a unique result ID
-
-
+async def inline_echo(inline_query: types.InlineQuery) -> None:
+    text = inline_query.query or "Echo"
+    result_id = hashlib.md5(text.encode()).hexdigest()
+    input_content = InputTextMessageContent(message_text=f'<b>{text}</b> - {user_data}',
+                                            parse_mode="HTML")
     item = InlineQueryResultArticle(
+        input_message_content=input_content,
         id=result_id,
-        title="Echo: " + text,  # Set the title of the result as "Echo: <input text>"
-        input_message_content=input_content  # Set the content of the message to be sent
+        title="Echo Bot!",
+        description= "Hello, I'm not simple bot!"
     )
 
-    # Use bot.answer_inline_query to send the result back to the user
-    await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1)
 
-
+    await  bot.answer_inline_query(results=[item],
+                                   inline_query_id=inline_query.id,
+                                   cache_time=1)
 
 async def main():
     await dp.start_polling(bot)
