@@ -12,6 +12,7 @@ TOKEN_API = "6853415335:AAFuL2FRe1vy9-5jGLJJoCMkEu5OcxSB4iU"  # Token to verify 
 bot = Bot(TOKEN_API)
 dp = Dispatcher()
 
+print("Start of work")
 
 inl = InlineKeyboardMarkup(inline_keyboard=[
     [
