@@ -127,6 +127,7 @@ HELP_COMMAND = """
 <b>/cryptocurrency_exchanges</b>-<em>list of best cryptocurrency exchanges</em>
 <b>/crypto_wallets</b>-<em>list of best crypto wallets</em>
 <b>/crypto_analysis</b>-<em>list of best crypto analysis platforms</em>
+<b>/education</b>-<em>information for study crypto trading</em>
 """
 
 
@@ -162,6 +163,8 @@ async def education_command(message: types.Message):
     await message.answer("Select a topic to learn more:", reply_markup=inl_education_tech_analysis)
 
 
+# ... [rest of your code]
+
 @dp.callback_query()
 async def process_callback(callback_query: types.CallbackQuery):
     await callback_query.answer()
@@ -174,11 +177,17 @@ async def process_callback(callback_query: types.CallbackQuery):
         media_group = [InputMediaPhoto(media=url) for url in content["photo_urls"]]
         await bot.send_media_group(callback_query.from_user.id, media=media_group)
 
-        # Send brief description and video link
-        video_keyboard = InlineKeyboardMarkup().add(InlineKeyboardButton("Watch Video", url=content['video_url']))
-        await bot.send_message(callback_query.from_user.id, content['brief'], reply_markup=video_keyboard)
-    else:
-        await bot.send_message(callback_query.from_user.id, "Sorry, I couldn't find information on that topic.")
+        video_keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Watch Video", url=content['video_url'])]
+            ]
+        )
+
+        await bot.send_message(
+            callback_query.from_user.id,
+            content['brief'],
+            reply_markup=video_keyboard
+        )
 
 
 async def main():
