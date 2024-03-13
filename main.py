@@ -7,8 +7,13 @@ import asyncio
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 from aiogram.types import InputMediaPhoto
 import feedparser
+from binance.client import Client
+import asyncio
 
 TOKEN_API = "6853415335:AAFuL2FRe1vy9-5jGLJJoCMkEu5OcxSB4iU"  # Token to verify Telegram API
+BINANCE_API_KEY = 'tVPDYzDFyKTp61pG7QqlYYpqLnFTpkiXwPPEtV4GVHYJYat9XIlrDrcqJOInPLhc'  # Replace with your Binance API Key
+BINANCE_API_SECRET = 'x2mSciFE9fzGBWAG3VJMgsGm2QiYxRfY2HiPCGksbBDKnKFcy5XSjq9no4te0wXN'  # Replace with your Binance API Secret
+binance_client = Client(BINANCE_API_KEY, BINANCE_API_SECRET)
 
 bot = Bot(TOKEN_API)
 dp = Dispatcher()
@@ -70,7 +75,7 @@ educational_content = {
 
 def fetch_latest_crypto_news():
     # RSS feed URL of your chosen crypto news source
-    news_url = 'https://yourcryptonewssource.com/rss'
+    news_url = "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml"
     news_feed = feedparser.parse(news_url)
     latest_news = []
 
@@ -82,6 +87,7 @@ def fetch_latest_crypto_news():
         latest_news.append(news_item)
 
     return latest_news
+
 
 inl_education_tech_analysis = InlineKeyboardMarkup(inline_keyboard=[
     [
@@ -143,6 +149,8 @@ HELP_COMMAND = """
 <b>/crypto_wallets</b>-<em>list of best crypto wallets</em>
 <b>/crypto_analysis</b>-<em>list of best crypto analysis platforms</em>
 <b>/education</b>-<em>information for study crypto trading</em>
+<b>/latest_news</b>-<em>shows latest crypto news</em>
+<b>/top_cryptos</b>-<em>shows info about top crypto-currencies</em>
 """
 
 
@@ -185,8 +193,37 @@ async def show_latest_news(message: types.Message) -> None:
         response_text += f"• <a href='{news['link']}'>{news['title']}</a>\n"
     await message.answer(text=response_text, parse_mode="HTML")
 
+# Fetching Top 15 Cryptocurrencies from Binance
+async def get_top_15_crypto_symbols():
+    tickers = binance_client.get_ticker()
+    sorted_tickers = sorted(tickers, key=lambda x: float(x['quoteVolume']), reverse=True)[:15]
+    symbols = [ticker['symbol'] for ticker in sorted_tickers]
+    return symbols
 
-# ... [rest of your code]
+# Command Handler for '/top_cryptos'
+@dp.message(Command('top_cryptos'))
+async def send_top_cryptos(message: types.Message):
+    symbols = await get_top_15_crypto_symbols()
+    keyboard = InlineKeyboardMarkup()
+
+    # Generating the inline keyboard in rows with 2 buttons each
+    buttons = [InlineKeyboardButton(text=symbol, callback_data=f"crypto_{symbol}") for symbol in symbols]
+    while buttons:
+        row = buttons[:2]  # Take up to 2 buttons for a row
+        keyboard.inline_keyboard.append(row)
+        buttons = buttons[2:]  # Remove the buttons that were just added
+
+    await message.answer("Select a cryptocurrency:", reply_markup=keyboard)
+
+# Callback Query Handler for Crypto Selection
+@dp.callback_query(lambda c: c.data.startswith('crypto_'))
+async def handle_crypto_callback_query(callback_query: types.CallbackQuery):
+    symbol = callback_query.data.split('_')[1]
+    # Fetch and display cryptocurrency details here...
+    await callback_query.message.answer(f"You selected {symbol}.")
+    await callback_query.answer()
+async def main():
+    await dp.start_polling()
 
 @dp.callback_query()
 async def process_callback(callback_query: types.CallbackQuery):
