@@ -214,6 +214,7 @@ async def send_top_cryptos(message: types.Message):
         buttons = buttons[2:]  # Remove the buttons that were just added
 
     await message.answer("Select a cryptocurrency:", reply_markup=keyboard)
+    print("Crypto was send")
 
 # Callback Query Handler for Crypto Selection
 @dp.callback_query(lambda c: c.data.startswith('crypto_'))
