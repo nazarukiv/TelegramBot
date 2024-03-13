@@ -10,9 +10,9 @@ import feedparser
 from binance.client import Client
 import asyncio
 
-TOKEN_API = "6853415335:AAFuL2FRe1vy9-5jGLJJoCMkEu5OcxSB4iU"  # Token to verify Telegram API
-BINANCE_API_KEY = 'tVPDYzDFyKTp61pG7QqlYYpqLnFTpkiXwPPEtV4GVHYJYat9XIlrDrcqJOInPLhc'  # Replace with your Binance API Key
-BINANCE_API_SECRET = 'x2mSciFE9fzGBWAG3VJMgsGm2QiYxRfY2HiPCGksbBDKnKFcy5XSjq9no4te0wXN'  # Replace with your Binance API Secret
+TOKEN_API = "#"  # Token to verify Telegram API
+BINANCE_API_KEY = '#'  # Replace with your Binance API Key
+BINANCE_API_SECRET = '#'  # Replace with your Binance API Secret
 binance_client = Client(BINANCE_API_KEY, BINANCE_API_SECRET)
 
 bot = Bot(TOKEN_API)
