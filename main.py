@@ -6,7 +6,7 @@ from aiogram.filters import Command
 import asyncio
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 from aiogram.types import InputMediaPhoto
-
+import feedparser
 
 TOKEN_API = "6853415335:AAFuL2FRe1vy9-5jGLJJoCMkEu5OcxSB4iU"  # Token to verify Telegram API
 
@@ -67,6 +67,21 @@ educational_content = {
     }
 }
 
+
+def fetch_latest_crypto_news():
+    # RSS feed URL of your chosen crypto news source
+    news_url = 'https://yourcryptonewssource.com/rss'
+    news_feed = feedparser.parse(news_url)
+    latest_news = []
+
+    for entry in news_feed.entries[:3]:
+        news_item = {
+            'title': entry.title,
+            'link': entry.link,
+        }
+        latest_news.append(news_item)
+
+    return latest_news
 
 inl_education_tech_analysis = InlineKeyboardMarkup(inline_keyboard=[
     [
@@ -161,6 +176,14 @@ async def wallet_cmd(message: types.Message) -> None:
 @dp.message(Command('education'))
 async def education_command(message: types.Message):
     await message.answer("Select a topic to learn more:", reply_markup=inl_education_tech_analysis)
+
+@dp.message(Command("latest_news"))
+async def show_latest_news(message: types.Message) -> None:
+    news_items = fetch_latest_crypto_news()
+    response_text = "<b>Latest Cryptocurrency News:</b>\n\n"
+    for news in news_items:
+        response_text += f"• <a href='{news['link']}'>{news['title']}</a>\n"
+    await message.answer(text=response_text, parse_mode="HTML")
 
 
 # ... [rest of your code]
