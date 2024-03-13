@@ -11,8 +11,8 @@ from binance.client import Client
 import asyncio
 
 TOKEN_API = "#"  # Token to verify Telegram API
-BINANCE_API_KEY = '#'  # Replace with your Binance API Key
-BINANCE_API_SECRET = '#'  # Replace with your Binance API Secret
+BINANCE_API_KEY = '#'  #Binance API Key
+BINANCE_API_SECRET = '#'  #Binance API Secret
 binance_client = Client(BINANCE_API_KEY, BINANCE_API_SECRET)
 
 bot = Bot(TOKEN_API)
