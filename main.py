@@ -17,6 +17,7 @@ binance_client = Client(BINANCE_API_KEY, BINANCE_API_SECRET)
 
 bot = Bot(TOKEN_API)
 dp = Dispatcher()
+
 educational_content = {
     "trend_lines": {
         "brief": "Learn how to find trend lines which are crucial for technical analysis.",
