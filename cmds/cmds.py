@@ -1,11 +1,12 @@
 import feedparser
-from aiogram import types
+from aiogram import types, Router
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
 
 from config.var import dp, HELP_COMMAND, binance_client, bot
 from kbds.main_kbds import inl, inl_wallets, inl_analysis_platform, inl_education_tech_analysis, educational_content
 
+cmds_router = Router()
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message) -> None:
@@ -69,11 +70,14 @@ async def send_top_cryptos(message: types.Message):
     await message.answer("Select a cryptocurrency:", reply_markup=keyboard)
     print("Crypto was send")
 
+@dp.message(Command('crypto_info'))
+async def crypto_info():
+
+
 # Callback Query Handler for Crypto Selection
 @dp.callback_query(lambda c: c.data.startswith('crypto_'))
 async def handle_crypto_callback_query(callback_query: types.CallbackQuery):
     symbol = callback_query.data.split('_')[1]
-    # Fetch and display cryptocurrency details here...
     await callback_query.message.answer(f"You selected {symbol}.")
     await callback_query.answer()
 async def main():
@@ -104,7 +108,6 @@ async def process_callback(callback_query: types.CallbackQuery):
         )
 
 def fetch_latest_crypto_news():
-    # RSS feed URL of your chosen crypto news source
     news_url = "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml"
     news_feed = feedparser.parse(news_url)
     latest_news = []

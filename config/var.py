@@ -1,14 +1,17 @@
-from multiprocessing.connection import Client
-
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+from binance import Client
 
-TOKEN_API = "#"  # Token to verify Telegram API
-BINANCE_API_KEY = '#'  #Binance API Key
-BINANCE_API_SECRET = '#'  #Binance API Secret
+TOKEN_API = "6853415335:AAFuL2FRe1vy9-5jGLJJoCMkEu5OcxSB4iU"
+BINANCE_API_KEY = 'RtnyF7Ec59b2NLQGOgfIbdO3c98J5TnsdumQ1XPkdkvZpTtFSkGCYSDPX6PN48KV'
+BINANCE_API_SECRET = 'zCLYr9q2wysx0pSV4ng8gDonaYhikKAxow32FAFWirDnGj1pAnWC92dOMkDR1E9I'
+
+storage = MemoryStorage()
+bot = Bot(TOKEN_API)
+dp = Dispatcher(storage=MemoryStorage())
+
 binance_client = Client(BINANCE_API_KEY, BINANCE_API_SECRET)
 
-bot = Bot(TOKEN_API)
-dp = Dispatcher()
 
 HELP_COMMAND = """
 <b>/help</b>-<em>list of commands</em>
